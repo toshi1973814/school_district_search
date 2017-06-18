@@ -17,7 +17,7 @@ h3 学区を知りたい地点をクリックして「この地点の学区の�
       - properties = primary_school._source.properties
       h3
         | #{properties.a27_006}#{properties.a27_007}
-        span#school-address data-school-address="#{properties.a27_008}" = " (所在地: #{properties.a27_008})"
+        span.school-address data-school-address="#{properties.a27_008}" = " (所在地: #{properties.a27_008})"
 
   - if @results.count == 0
     p 該当地点のデータは登録されていません
@@ -50,7 +50,7 @@ javascript:
 
   function codeAddress(map) {
   
-    var address = $('#school-address').attr('data-school-address');
+    var address = $('.school-address').first().attr('data-school-address');
   
     geocoder.geocode( { 'address' : address }, function( results, status ) {
       if( status == google.maps.GeocoderStatus.OK ) {
@@ -84,7 +84,7 @@ javascript:
     });
     markers.push(marker);
     getAddress(position);
-    if(0 < $('#school-address').length && false == initialized) {
+    if(0 < $('.school-address').length && false == initialized) {
       codeAddress(map);
     }
   }

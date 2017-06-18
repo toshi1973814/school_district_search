@@ -18,12 +18,13 @@ https://github.com/itay-grudev/es-tutorial
 
 を参考にさせていただきました。ありがとうございます。
 
-System dependencies
+=== System dependencies
 
-ElasticSearch
-GDAL
+* ElasticSearch
+* GDAL
+* Python
 
-Database creation
+=== Database creation
 
 ダウンロードからogr2ogrによるシェープデータからJSONデータへの変換は「Elasticsearchに空間データを突っ込む」に記載のある通りです。
 出来上がったJSONデータは、当然「Elasticsearchに空間データを突っ込む」のものとはデータ構成が異なりますので、ElasticSearchに登録するマッピングデータとElasticSearchにデータを登録する際のプログラムは「Elasticsearchに空間データを突っ込む」とは異なります。

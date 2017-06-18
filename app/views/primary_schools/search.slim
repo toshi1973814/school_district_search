@@ -1,23 +1,34 @@
-h1 緯度経度から小学校区を検索する
+h1 小学校区を検索する(東京、神奈川限定)
 
 #map style="width: 800px; height: 400px;"
 
 javascript:
+  var old_marker = null;
   handler = Gmaps.build('Google');
   handler.buildMap({ provider: {}, internal: {id: 'map'}}, function(){
-    markers = handler.addMarkers(#{raw @hash.to_json});
-    handler.bounds.extendWith(markers);
-    handler.fitMapToBounds();
+    handler.getMap().setCenter(#{raw @hash.first.to_json});
     handler.getMap().setZoom(15);
-    google.maps.event.addListener(handler.getMap(), 'click', function(object){ var position_clicked = object.latLng; console.log(position_clicked.lat())});
+    google.maps.event.addListener(handler.getMap(), 'click', function(object){
+      if(old_marker !== null) {
+        old_marker.setMap(null);
+      } 
+      var position_clicked = object.latLng;
+      $('#lat').val(position_clicked.lat());
+      $('#lng').val(position_clicked.lng());
+      var marker = new google.maps.Marker({
+          position: object.latLng,
+          map: handler.getMap()
+      });
+      old_marker = marker;
+      handler.getMap().panTo(object.latLng);
+    });
   });
 
 = form_tag primary_schools_path, method: :get
-  span 緯度:
-  = text_field_tag :lat, params[:lat]
-  span 経度:
-  = text_field_tag :lng, params[:lng]
-  = button_tag '検索'
+  = hidden_field_tag :lat, params[:lat]
+  = hidden_field_tag :lng, params[:lng]
+  p#address
+  = button_tag 'マーカー地点の学区の小学校を検索する'
 
 - if @results
   h2 

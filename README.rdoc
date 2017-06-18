@@ -18,12 +18,13 @@ https://github.com/itay-grudev/es-tutorial
 
 を参考にさせていただきました。ありがとうございます。
 
-System dependencies
+=== System dependencies
 
-ElasticSearch
-GDAL
+* ElasticSearch
+* GDAL
+* Python
 
-Database creation
+=== Database creation
 
 ダウンロードからogr2ogrによるシェープデータからJSONデータへの変換は「Elasticsearchに空間データを突っ込む」に記載のある通りです。
 出来上がったJSONデータは、当然「Elasticsearchに空間データを突っ込む」のものとはデータ構成が異なりますので、ElasticSearchに登録するマッピングデータとElasticSearchにデータを登録する際のプログラムは「Elasticsearchに空間データを突っ込む」とは異なります。
@@ -33,6 +34,6 @@ script/primary_school_mapping.json
 データ登録用のPythonプログラムは
 script/import_primary_school_geojson.py
 です。
-なお、Pythonプログラムは、元となる
+なお、Pythonプログラムは、元となる「Elasticsearchに空間データを突っ込む」の
 https://gist.github.com/laughingman7743/543a7bb65d9623ecb429#file-import_geojson-py
 のファイル名指定個所を引数化して、異なるファイルのJSONデータを登録する際に都度ファイルを書き換える必要がないようにしています。

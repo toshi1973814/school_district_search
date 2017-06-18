@@ -1,13 +1,15 @@
-h1 ES Search Demo
+h1 緯度経度から小学校区を検索する
 
 = form_tag primary_schools_path, method: :get
+  span 緯度:
   = text_field_tag :lat, params[:lat]
+  span 経度:
   = text_field_tag :lng, params[:lng]
-  = button_tag 'Search'
+  = button_tag '検索'
 
 - if @results
   h2 
-    | Search
+    | 検索結果
     small
       = ' (' + pluralize(@results.count, 'result') + ')'
       | &nbsp;
@@ -19,7 +21,7 @@ h1 ES Search Demo
   - @results.each do |primary_school|
     article
       - properties = primary_school._source.properties
-      h3 = "#{properties.a27_005}#{properties.a27_006}#{properties.a27_007}#{properties.a27_008}"
+      h3 = "#{properties.a27_006}#{properties.a27_007}#{properties.a27_008}(#{properties.a27_005})"
 
   - if @results.count == 0
     p No results found

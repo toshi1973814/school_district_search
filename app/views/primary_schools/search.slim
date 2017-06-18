@@ -1,8 +1,28 @@
-h1 小学校区を検索する(東京、神奈川限定)
+h1 小学校区検索
 
 h3 学区を知りたい地点をクリックして「この地点の学区の小学校を検索する」ボタンを押すと、その地点が学区の小学校が表示されます。
 
-#map style="width: 800px; height: 400px;"
+= form_tag primary_schools_path, method: :get
+  = hidden_field_tag :lat, params[:lat]
+  = hidden_field_tag :lng, params[:lng]
+  div 
+    | クリックした地点:
+    span#address
+  = button_tag 'この地点の学区の小学校を検索する'
+
+- if @results
+
+  - @results.each do |primary_school|
+    article
+      - properties = primary_school._source.properties
+      h3
+        | #{properties.a27_006}#{properties.a27_007}
+        span#school-address data-school-address="#{properties.a27_008}" = " (所在地: #{properties.a27_008})"
+
+  - if @results.count == 0
+    p 該当地点のデータは登録されていません
+
+#map
 
 javascript:
   var markers = [];
@@ -69,6 +89,14 @@ javascript:
     }
   }
   handler = Gmaps.build('Google');
+  var window_width = $(window).width() * 0.95;
+  $('#map').width(window_width);
+  // 画面が横長か縦長かで高さを分岐
+  if($(window).width() < $(window).height()) {
+    $('#map').height(window_width * 0.8);
+  } else {
+    $('#map').height(window_width * 0.3);
+  }
   handler.buildMap({ provider: {}, internal: {id: 'map'}}, function(){
     handler.getMap().setCenter(#{raw @hash.first.to_json});
     handler.getMap().setZoom(15);
@@ -84,36 +112,5 @@ javascript:
       }
       addMarker(object.latLng, handler.getMap());
     });
-    google.maps.event.addDomListener(window, "resize", function() {
-      var bound = new google.maps.LatLngBounds();
-      for(var i in markers)
-      {
-        bound.extend(markers[i].getPosition());
-      }
-      handler.getMap().fitBounds(bound);
-    });
   });
 
-= form_tag primary_schools_path, method: :get
-  = hidden_field_tag :lat, params[:lat]
-  = hidden_field_tag :lng, params[:lng]
-  p#address
-  = button_tag 'この地点の学区の小学校を検索する'
-
-- if @results
-  h2 
-    | 検索結果
-  - if @results.respond_to? :took
-    small = 'performed in ' + ( @results.took.to_f / 1000 ).to_s + ' seconds'
-  
-  - #if @results.respond_to? :response and (suggestion = autosuggest_aggregate(@results.response.suggest, [:title, :body], params[:query]))
-
-  - @results.each do |primary_school|
-    article
-      - properties = primary_school._source.properties
-      h3 = "#{properties.a27_006}#{properties.a27_007}"
-      h4#school-address data-school-address="#{properties.a27_008}" = "所在地: #{properties.a27_008}"
-      h4 = "コード番号: #{properties.a27_005}"
-
-  - if @results.count == 0
-    p 該当地点のデータは登録されていません

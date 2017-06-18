@@ -34,6 +34,6 @@ script/primary_school_mapping.json
 データ登録用のPythonプログラムは
 script/import_primary_school_geojson.py
 です。
-なお、Pythonプログラムは、元となる
+なお、Pythonプログラムは、元となる「Elasticsearchに空間データを突っ込む」の
 https://gist.github.com/laughingman7743/543a7bb65d9623ecb429#file-import_geojson-py
 のファイル名指定個所を引数化して、異なるファイルのJSONデータを登録する際に都度ファイルを書き換える必要がないようにしています。

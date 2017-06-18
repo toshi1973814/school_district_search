@@ -1,10 +1,18 @@
 == ElascticSearchのGeo Query機能を使って学区検索をする
 
-緯度経度からその地点がどの小学校の学区であるかを検索できるWebアプリです。
+埋め込みGoogleMap上のクリック地点がどの小学校の学区であるかを検索できるWebアプリです。
 GoogleMapでは、該当地点からの最寄りの学校を検索することはできますが、該当地点がどの小学校の学区であるかを検索することができません。
 そこで国土交通省が公開している小学校区データ
 http://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-A27.html
 のシェープファイルをgeo jsonに変換し、それをElasticSearchに登録し、Railsからそれを検索させるというアプリです。
+
+=== System dependencies
+
+* ElasticSearch
+* GDAL
+* Python
+
+=== 参考サイト
 
 なお、国土交通省のデータをElasticSearchに登録し、検索できるようにする箇所は
 
@@ -18,16 +26,10 @@ https://github.com/itay-grudev/es-tutorial
 
 を参考にさせていただきました。ありがとうございます。
 
-=== System dependencies
-
-* ElasticSearch
-* GDAL
-* Python
-
 === Database creation
 
-ダウンロードからogr2ogrによるシェープデータからJSONデータへの変換は「Elasticsearchに空間データを突っ込む」に記載のある通りです。
-出来上がったJSONデータは、当然「Elasticsearchに空間データを突っ込む」のものとはデータ構成が異なりますので、ElasticSearchに登録するマッピングデータとElasticSearchにデータを登録する際のプログラムは「Elasticsearchに空間データを突っ込む」とは異なります。
+国土交通省のデータダウンロード、ogr2ogrによるシェープデータからJSONデータへの変換は参考サイト「Elasticsearchに空間データを突っ込む」に記載のある通りです。
+出来上がったJSONデータは、「Elasticsearchに空間データを突っ込む」とはデータ構成が異なりますので、ElasticSearchに登録するマッピングデータとElasticSearchにデータを登録する際のプログラムは「Elasticsearchに空間データを突っ込む」とは異なります。
 
 マッピングデータは
 script/primary_school_mapping.json

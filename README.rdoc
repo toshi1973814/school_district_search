@@ -50,7 +50,7 @@ elasticsearch.helpers.BulkIndexError: (u'2 document(s) failed to index.', [{u'cr
 elasticsearch.helpers.BulkIndexError: (u'2 document(s) failed to index.', [{u'create': {u'status': 400, u'_type': u'FeatureCollection', u'_id': u'AVy4vZ_LzscpCYnG8lYv', u'error': {u'caused_by': {u'reason': u'Self-intersection at or near point (140.15264603708988, 35.67419905420827, NaN)', u'type': u'invalid_shape_exception'}, u'reason': u'failed to parse [geometry]', u'type': u'mapper_parsing_exception'}, u'_index': u'primary_schools'}}, {u'create': {u'status': 400, u'_type': u'FeatureCollection', u'_id': u'AVy4vZ_MzscpCYnG8lav', u'error': {u'caused_by': {u'reason': u'Self-intersection at or near point (140.3050565974025, 35.337689532467635, NaN)', u'type': u'invalid_shape_exception'}, u'reason': u'failed to parse [geometry]', u'type': u'mapper_parsing_exception'}, u'_index': u'primary_schools'}}])
 
 これらのエラーに関しては詳しくは追及していませんが、
-Points of LinearRing do not form a closed linestring
-Self-intersection at or near point
+* Points of LinearRing do not form a closed linestring
+* Self-intersection at or near point
 とあるようにgeoデータに問題があるように見えます。
 もととなるシェープデータに問題があるのか、はたまたogr2ogrでの変換の過程でおかしくなるのか、どなたかわかる方がいらっしゃいましたら、ご教授ください。

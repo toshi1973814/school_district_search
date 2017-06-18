@@ -1,26 +1,57 @@
 h1 小学校区を検索する(東京、神奈川限定)
 
+h3 学区を知りたい地点をクリックして「この地点の学区の小学校を検索する」ボタンを押すと、その地点が学区の小学校が表示されます。
+
 #map style="width: 800px; height: 400px;"
 
 javascript:
   var old_marker = null;
+  var initialized = false;
+  var geocoder = new google.maps.Geocoder();
+
+  // https://stackoverflow.com/questions/10375925/get-address-after-clicking-in-the-map
+  function getAddress(latLng) {
+    geocoder.geocode( {'latLng': latLng},
+      function(results, status) {
+        if(status == google.maps.GeocoderStatus.OK) {
+          if(results[0]) {
+            $('#address').html(results[0].formatted_address);
+          }
+          else {
+            $('#address').html("No results");
+          }
+        }
+        else {
+          $('#address').html(status);
+        }
+      }
+    );
+  }
+  function addMarker(position, map) {
+      $('#lat').val(position.lat());
+      $('#lng').val(position.lng());
+      var marker = new google.maps.Marker({
+          position: position,
+          map: map
+      });
+      old_marker = marker;
+      getAddress(position);
+  }
   handler = Gmaps.build('Google');
   handler.buildMap({ provider: {}, internal: {id: 'map'}}, function(){
     handler.getMap().setCenter(#{raw @hash.first.to_json});
     handler.getMap().setZoom(15);
+    google.maps.event.addListener(handler.getMap(), 'bounds_changed', function(object){
+      if(false == initialized) {
+        addMarker(handler.getMap().getCenter(), handler.getMap());
+        initialized = true;
+      }
+    });
     google.maps.event.addListener(handler.getMap(), 'click', function(object){
       if(old_marker !== null) {
         old_marker.setMap(null);
       } 
-      var position_clicked = object.latLng;
-      $('#lat').val(position_clicked.lat());
-      $('#lng').val(position_clicked.lng());
-      var marker = new google.maps.Marker({
-          position: object.latLng,
-          map: handler.getMap()
-      });
-      old_marker = marker;
-      handler.getMap().panTo(object.latLng);
+      addMarker(object.latLng, handler.getMap());
     });
   });
 
@@ -28,23 +59,23 @@ javascript:
   = hidden_field_tag :lat, params[:lat]
   = hidden_field_tag :lng, params[:lng]
   p#address
-  = button_tag 'マーカー地点の学区の小学校を検索する'
+  = button_tag 'この地点の学区の小学校を検索する'
 
 - if @results
   h2 
     | 検索結果
-    small
-      = ' (' + pluralize(@results.count, 'result') + ')'
-      | &nbsp;
-      - if @results.respond_to? :took
-        small = 'performed in ' + ( @results.took.to_f / 1000 ).to_s + ' seconds'
+  small
+    - if @results.respond_to? :took
+      small = 'performed in ' + ( @results.took.to_f / 1000 ).to_s + ' seconds'
   
   - #if @results.respond_to? :response and (suggestion = autosuggest_aggregate(@results.response.suggest, [:title, :body], params[:query]))
 
   - @results.each do |primary_school|
     article
       - properties = primary_school._source.properties
-      h3 = "#{properties.a27_006}#{properties.a27_007}#{properties.a27_008}(#{properties.a27_005})"
+      h3 = "#{properties.a27_006}#{properties.a27_007}"
+      h4 = "所在地: #{properties.a27_007}#{properties.a27_008}"
+      h4 = "コード番号: #{properties.a27_005}"
 
   - if @results.count == 0
     p No results found

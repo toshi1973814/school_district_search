@@ -68,6 +68,7 @@ GEM
     execjs (2.7.0)
     faraday (0.12.1)
       multipart-post (>= 1.2, < 3)
+    geocoder (1.4.4)
     git-version-bump (0.15.1)
     globalid (0.4.0)
       activesupport (>= 4.2.0)
@@ -190,6 +191,7 @@ DEPENDENCIES
   byebug
   coffee-rails
   elasticsearch-model
+  geocoder
   gmaps4rails
   io-console
   jbuilder (~> 2.0)

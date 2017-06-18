@@ -1,28 +1,38 @@
 == README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+緯度経度からその地点がどの小学校の学区であるかを検索できるWebアプリです。
+GoogleMapでは、該当地点からの最寄りの学校を検索することはできますが、該当地点がどの小学校の学区であるかを検索することができません。
+そこで国土交通省が公開している小学校区データ
+http://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-A27.html
+のシェープファイルをgeo jsonに変換し、それをElasticSearchに登録し、Railsからそれを検索させるというアプリです。
 
-Things you may want to cover:
+なお、国土交通省のデータをElasticSearchに登録し、検索できるようにする箇所は
 
-* Ruby version
+Elasticsearchに空間データを突っ込む
+http://laughingman7743.hatenablog.com/entry/2015/10/25/235851
 
-* System dependencies
+を参考にし、RailsからElasticSearchのデータを検索する箇所は
 
-* Configuration
+ES-Tutorial（英語）
+https://github.com/itay-grudev/es-tutorial
 
-* Database creation
+を参考にさせていただきました。ありがとうございます。
 
-* Database initialization
+System dependencies
 
-* How to run the test suite
+ElasticSearch
+GDAL
 
-* Services (job queues, cache servers, search engines, etc.)
+Database creation
 
-* Deployment instructions
+ダウンロードからogr2ogrによるシェープデータからJSONデータへの変換は「Elasticsearchに空間データを突っ込む」に記載のある通りです。
+出来上がったJSONデータは、当然「Elasticsearchに空間データを突っ込む」のものとはデータ構成が異なりますので、ElasticSearchに登録するマッピングデータとElasticSearchにデータを登録する際のプログラムは「Elasticsearchに空間データを突っ込む」とは異なります。
 
-* ...
-
-
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+マッピングデータは
+script/primary_school_mapping.json
+データ登録用のPythonプログラムは
+script/import_primary_school_geojson.py
+です。
+なお、Pythonプログラムは、元となる
+https://gist.github.com/laughingman7743/543a7bb65d9623ecb429#file-import_geojson-py
+のファイル名指定個所を引数化して、異なるファイルのJSONデータを登録する際に都度ファイルを書き換える必要がないようにしています。

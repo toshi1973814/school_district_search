@@ -64,9 +64,8 @@ javascript:
 - if @results
   h2 
     | 検索結果
-  small
-    - if @results.respond_to? :took
-      small = 'performed in ' + ( @results.took.to_f / 1000 ).to_s + ' seconds'
+  - if @results.respond_to? :took
+    small = 'performed in ' + ( @results.took.to_f / 1000 ).to_s + ' seconds'
   
   - #if @results.respond_to? :response and (suggestion = autosuggest_aggregate(@results.response.suggest, [:title, :body], params[:query]))
 
@@ -78,6 +77,4 @@ javascript:
       h4 = "コード番号: #{properties.a27_005}"
 
   - if @results.count == 0
-    p No results found
-- else
-  p Enter your search term using the form above
+    p 該当地点のデータは登録されていません

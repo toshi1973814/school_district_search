@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :places
+
   # root to: 'jp_cities#search'
   root to: 'primary_schools#search'
   get '/search' => 'search#search', as: :search

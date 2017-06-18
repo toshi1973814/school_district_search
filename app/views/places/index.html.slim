@@ -1,0 +1,27 @@
+h1 Listing places
+
+table
+  thead
+    tr
+      th Name
+      th Description
+      th Latitude
+      th Longitude
+      th
+      th
+      th
+
+  tbody
+    - @places.each do |place|
+      tr
+        td = place.name
+        td = place.description
+        td = place.latitude
+        td = place.longitude
+        td = link_to 'Show', place
+        td = link_to 'Edit', edit_place_path(place)
+        td = link_to 'Destroy', place, data: { confirm: 'Are you sure?' }, method: :delete
+
+br
+
+= link_to 'New Place', new_place_path

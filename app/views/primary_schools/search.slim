@@ -1,5 +1,17 @@
 h1 緯度経度から小学校区を検索する
 
+#map style="width: 800px; height: 400px;"
+
+javascript:
+  handler = Gmaps.build('Google');
+  handler.buildMap({ provider: {}, internal: {id: 'map'}}, function(){
+    markers = handler.addMarkers(#{raw @hash.to_json});
+    handler.bounds.extendWith(markers);
+    handler.fitMapToBounds();
+    handler.getMap().setZoom(15);
+    google.maps.event.addListener(handler.getMap(), 'click', function(object){ var position_clicked = object.latLng; console.log(position_clicked.lat())});
+  });
+
 = form_tag primary_schools_path, method: :get
   span 緯度:
   = text_field_tag :lat, params[:lat]

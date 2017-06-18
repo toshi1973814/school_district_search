@@ -6,6 +6,14 @@ GoogleMapでは、該当地点からの最寄りの学校を検索すること�
 http://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-A27.html
 のシェープファイルをgeo jsonに変換し、それをElasticSearchに登録し、Railsからそれを検索させるというアプリです。
 
+=== System dependencies
+
+* ElasticSearch
+* GDAL
+* Python
+
+=== 参考サイト
+
 なお、国土交通省のデータをElasticSearchに登録し、検索できるようにする箇所は
 
 Elasticsearchに空間データを突っ込む
@@ -16,21 +24,11 @@ http://laughingman7743.hatenablog.com/entry/2015/10/25/235851
 ES-Tutorial（英語）
 https://github.com/itay-grudev/es-tutorial
 
-GoogleMapApi周りは
-RailsでGoogleMapを表示させる(gem 'gmaps4rails'の使い方)
-http://qiita.com/nakanoyoshiki/items/af9f37e9d2653518d6b0
-
 を参考にさせていただきました。ありがとうございます。
-
-=== System dependencies
-
-* ElasticSearch
-* GDAL
-* Python
 
 === Database creation
 
-国土交通省のデータダウンロード、ogr2ogrによるシェープデータからJSONデータへの変換は「Elasticsearchに空間データを突っ込む」に記載のある通りです。
+国土交通省のデータダウンロード、ogr2ogrによるシェープデータからJSONデータへの変換は参考サイト「Elasticsearchに空間データを突っ込む」に記載のある通りです。
 出来上がったJSONデータは、「Elasticsearchに空間データを突っ込む」とはデータ構成が異なりますので、ElasticSearchに登録するマッピングデータとElasticSearchにデータを登録する際のプログラムは「Elasticsearchに空間データを突っ込む」とは異なります。
 
 マッピングデータは

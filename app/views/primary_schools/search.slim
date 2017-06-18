@@ -5,7 +5,7 @@ h3 学区を知りたい地点をクリックして「この地点の学区の�
 #map style="width: 800px; height: 400px;"
 
 javascript:
-  var old_marker = null;
+  var markers = [];
   var initialized = false;
   var geocoder = new google.maps.Geocoder();
 
@@ -27,15 +27,46 @@ javascript:
       }
     );
   }
-  function addMarker(position, map) {
-      $('#lat').val(position.lat());
-      $('#lng').val(position.lng());
-      var marker = new google.maps.Marker({
-          position: position,
+
+  function codeAddress(map) {
+  
+    var address = $('#school-address').attr('data-school-address');
+  
+    geocoder.geocode( { 'address' : address }, function( results, status ) {
+      if( status == google.maps.GeocoderStatus.OK ) {
+
+        var marker = new google.maps.Marker({
+          position: results[0].geometry.location,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 10
+          },
           map: map
-      });
-      old_marker = marker;
-      getAddress(position);
+        });
+        markers.push(marker);
+        var bounds = new google.maps.LatLngBounds();
+        for (var i = 0; i < markers.length; i++) {
+         bounds.extend(markers[i].getPosition());
+        }
+        map.fitBounds(bounds); 
+      } else {
+          alert( 'Geocodeは次の理由で失敗しました: ' + status );
+      }
+    } );
+  }
+
+  function addMarker(position, map) {
+    $('#lat').val(position.lat());
+    $('#lng').val(position.lng());
+    var marker = new google.maps.Marker({
+      position: position,
+      map: map
+    });
+    markers.push(marker);
+    getAddress(position);
+    if(0 < $('#school-address').length && false == initialized) {
+      codeAddress(map);
+    }
   }
   handler = Gmaps.build('Google');
   handler.buildMap({ provider: {}, internal: {id: 'map'}}, function(){
@@ -48,10 +79,18 @@ javascript:
       }
     });
     google.maps.event.addListener(handler.getMap(), 'click', function(object){
-      if(old_marker !== null) {
-        old_marker.setMap(null);
-      } 
+      for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+      }
       addMarker(object.latLng, handler.getMap());
+    });
+    google.maps.event.addDomListener(window, "resize", function() {
+      var bound = new google.maps.LatLngBounds();
+      for(var i in markers)
+      {
+        bound.extend(markers[i].getPosition());
+      }
+      handler.getMap().fitBounds(bound);
     });
   });
 
@@ -73,7 +112,7 @@ javascript:
     article
       - properties = primary_school._source.properties
       h3 = "#{properties.a27_006}#{properties.a27_007}"
-      h4 = "所在地: #{properties.a27_007}#{properties.a27_008}"
+      h4#school-address data-school-address="#{properties.a27_008}" = "所在地: #{properties.a27_008}"
       h4 = "コード番号: #{properties.a27_005}"
 
   - if @results.count == 0

@@ -1,0 +1,37 @@
+{
+    "mappings": {
+        "FeatureCollection": {
+            "properties": {
+                "type": {
+                    "store": "yes",
+                    "type": "string"
+                },
+                "properties": {
+                    "properties": {
+                        "a27_005": {
+                            "store": "yes",
+                            "type": "string"
+                        },
+                        "a27_006": {
+                            "store": "yes",
+                            "type": "string"
+                        },
+                        "a27_007": {
+                            "store": "yes",
+                            "type": "string"
+                        },
+                        "a27_008": {
+                            "store": "yes",
+                            "type": "string"
+                        }
+                    }
+                },
+                "geometry": {
+                   "type": "geo_shape",
+                   "tree": "quadtree",
+                   "precision": "50m"
+                }
+            }
+        }
+    }
+}

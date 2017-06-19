@@ -14,13 +14,17 @@ http://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-A27.html
 
 === Configuration
 
-export APP_PATH=[Railsアプリへのパス]
-export GOOGLE_MAP_API_KEY=[https://developers.google.com/maps/web/から取得したキー]
+以下の環境変数を設定してください。
+
+export APP_PATH=Railsアプリへのパス
+
+export GOOGLE_MAP_API_KEY=https://developers.google.com/maps/web/から取得したキー
 
 ==== Basic認証を設定する場合（設定しなければオープンなサイトになります)
 
-export PRIMARY_SCHOOL_SEARCH_AUTH_ID=[Basic認証ID]
-export PRIMARY_SCHOOL_SEARCH_AUTH_PW=[Basic認証パスワード]
+export PRIMARY_SCHOOL_SEARCH_AUTH_ID=Basic認証ID
+
+export PRIMARY_SCHOOL_SEARCH_AUTH_PW=Basic認証パスワード
 
 === 参考サイト
 

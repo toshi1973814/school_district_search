@@ -33,9 +33,9 @@ group :development, :test do
 end
 gem 'therubyracer'
 gem 'multi_json', '1.7.8'
-gem 'byebug'
 gem 'gmaps4rails'
 gem 'bigdecimal'
 gem 'io-console'
 gem 'psych'
 gem 'geocoder'
+gem 'unicorn'

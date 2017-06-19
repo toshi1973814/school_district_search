@@ -12,6 +12,16 @@ http://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-A27.html
 * GDAL
 * Python
 
+=== Configuration
+
+export APP_PATH=[Railsアプリへのパス]
+export GOOGLE_MAP_API_KEY=[https://developers.google.com/maps/web/から取得したキー]
+
+==== Basic認証を設定する場合（設定しなければオープンなサイトになります)
+
+export PRIMARY_SCHOOL_SEARCH_AUTH_ID=[Basic認証ID]
+export PRIMARY_SCHOOL_SEARCH_AUTH_PW=[Basic認証パスワード]
+
 === 参考サイト
 
 なお、国土交通省のデータをElasticSearchに登録し、検索できるようにする箇所は

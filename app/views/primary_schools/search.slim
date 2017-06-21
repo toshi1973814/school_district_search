@@ -1,6 +1,7 @@
 h1 小学校区検索
 
-h3 学区を知りたい地点をクリックして「この地点の学区の小学校を検索する」ボタンを押すと、その地点が学区の小学校が黒丸で表示されます。
+h4 学区を知りたい地点をクリックして「この地点の学区の小学校を検索する」ボタンを押してください。
+h4 検索地点に赤いマーカー、学校に黒丸のマーカー、学区がグレーで表示されます。 
 
 = form_tag primary_schools_path, method: :get
   = hidden_field_tag :lat, params[:lat]
@@ -47,15 +48,25 @@ javascript:
     );
   }
 
+  var schoolPosition = null;
+  var searchPosition = null;
+
+  function calcDistance(p1, p2) {
+    return (google.maps.geometry.spherical.computeDistanceBetween(p1, p2) / 1000).toFixed(2);
+  }
+
   function codeAddress(map) {
   
     var address = $('.school-address').first().attr('data-school-address');
   
     geocoder.geocode( { 'address' : address }, function( results, status ) {
       if( status == google.maps.GeocoderStatus.OK ) {
+        schoolPosition = results[0].geometry.location
+
+        alert(calcDistance(searchPosition, schoolPosition));
 
         var marker = new google.maps.Marker({
-          position: results[0].geometry.location,
+          position: schoolPosition,
           icon: {
             path: google.maps.SymbolPath.CIRCLE,
             scale: 10
@@ -63,6 +74,11 @@ javascript:
           map: map
         });
         markers.push(marker);
+        var bounds = new google.maps.LatLngBounds();
+        for (var i = 0; i < markers.length; i++) {
+         bounds.extend(markers[i].getPosition());
+        }
+        map.fitBounds(bounds);
       } else {
           alert( 'Geocodeは次の理由で失敗しました: ' + status );
       }
@@ -70,6 +86,7 @@ javascript:
   }
 
   function addMarker(position, map) {
+    searchPosition = position;
     $('#lat').val(position.lat());
     $('#lng').val(position.lng());
     var marker = new google.maps.Marker({
@@ -83,31 +100,22 @@ javascript:
     }
   }
 
-  var jsonData = {
-    "type": "FeatureCollection",
-    "features": [
-      {
-        "type": "Feature",
-        "properties": {
-          "stroke": "#555555",
-          "stroke-width": 2,
-          "stroke-opacity": 1
-        },
-        "geometry": #{raw @results.first._source.geometry.to_json}
-      }
-    ]
-  };
-
-  function processPoints(geometry, callback, thisArg) {
-    if (geometry instanceof google.maps.LatLng) {
-      callback.call(thisArg, geometry);
-    } else if (geometry instanceof google.maps.Data.Point) {
-      callback.call(thisArg, geometry.get());
-    } else {
-      geometry.getArray().forEach(function(g) {
-        processPoints(g, callback, thisArg);
-      });
-    }
+  var jsonData = null;
+  if(0 < "#{@results}".length) {
+    jsonData = {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {
+            "stroke": "#555555",
+            "stroke-width": 2,
+            "stroke-opacity": 1
+          },
+          "geometry": #{(@results.blank?) ? "[]" : raw(@results.first._source.geometry.to_json)}
+        }
+      ]
+    };
   }
 
   handler = Gmaps.build('Google');
@@ -124,8 +132,10 @@ javascript:
     var map = handler.getMap();
     map.setCenter(#{raw @hash.first.to_json});
     map.setZoom(15);
-    map.data.addGeoJson(jsonData);
-    map.data.setStyle({strokeColor: "blue"});
+    if(null != jsonData) {
+      map.data.addGeoJson(jsonData);
+      map.data.setStyle({strokeColor: "blue"});
+    }
     google.maps.event.addListener(map, 'bounds_changed', function(object){
       if(false == initialized) {
         addMarker(map.getCenter(), map);
@@ -137,12 +147,6 @@ javascript:
         markers[i].setMap(null);
       }
       addMarker(object.latLng, map);
-    });
-
-    map.data.addListener('addfeature', function(e) {
-      var bounds = new google.maps.LatLngBounds();
-      processPoints(e.feature.getGeometry(), bounds.extend, bounds);
-      map.fitBounds(bounds);
     });
   });
 

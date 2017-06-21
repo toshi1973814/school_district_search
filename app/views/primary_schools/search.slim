@@ -1,7 +1,8 @@
 h1 小学校区検索
 
-h4 学区を知りたい地点をクリックして「この地点の学区の小学校を検索する」ボタンを押してください。
-h4 検索地点に赤いマーカー、学校に黒丸のマーカー、学区がグレーで表示されます。 
+h4
+  | 学区を知りたい地点をクリックして「この地点の学区の小学校を検索する」ボタンを押してください。
+  | 赤いマーカーが検索地点で、Bのマーカーが学校です。青線がクリック地点から学校までのルートです。また、学区はグレーで表示されています。
 
 = form_tag primary_schools_path, method: :get
   = hidden_field_tag :lat, params[:lat]
@@ -20,12 +21,13 @@ h4 検索地点に赤いマーカー、学校に黒丸のマーカー、学区�
       h3
         | #{properties.a27_006}#{properties.a27_007}
         span.school-address data-school-address="#{properties.a27_008}" = " (所在地: #{properties.a27_008})"
-      div
-        | クリック地点からの距離:
-        span#distance
-        | &nbsp;
-        | クリック地点からの徒歩時間:
-        span#duration
+      - if 0 == counter
+        div
+          | クリック地点からの距離:
+          span#distance
+          | &nbsp;
+          | クリック地点からの徒歩時間:
+          span#duration
 
       - counter = counter + 1
   - if @results.count == 0
@@ -98,21 +100,6 @@ javascript:
             window.alert('Directions request failed due to ' + status);
           }
         });
-
-        var marker = new google.maps.Marker({
-          position: schoolPosition,
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 10
-          },
-          map: map
-        });
-        markers.push(marker);
-        var bounds = new google.maps.LatLngBounds();
-        for (var i = 0; i < markers.length; i++) {
-         bounds.extend(markers[i].getPosition());
-        }
-        map.fitBounds(bounds);
       } else {
           alert( 'Geocodeは次の理由で失敗しました: ' + status );
       }
@@ -178,6 +165,12 @@ javascript:
       }
     });
     google.maps.event.addListener(map, 'click', function(object){
+      for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+      }
+      addMarker(object.latLng, map);
+    });
+    map.data.addListener('click', function(object){
       for (var i = 0; i < markers.length; i++) {
         markers[i].setMap(null);
       }

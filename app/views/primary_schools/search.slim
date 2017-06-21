@@ -29,7 +29,6 @@ javascript:
   var initialized = false;
   var geocoder = new google.maps.Geocoder();
 
-  // https://stackoverflow.com/questions/10375925/get-address-after-clicking-in-the-map
   function getAddress(latLng) {
     geocoder.geocode( {'latLng': latLng},
       function(results, status) {
@@ -64,11 +63,6 @@ javascript:
           map: map
         });
         markers.push(marker);
-        var bounds = new google.maps.LatLngBounds();
-        for (var i = 0; i < markers.length; i++) {
-         bounds.extend(markers[i].getPosition());
-        }
-        map.fitBounds(bounds); 
       } else {
           alert( 'Geocodeは次の理由で失敗しました: ' + status );
       }
@@ -88,6 +82,34 @@ javascript:
       codeAddress(map);
     }
   }
+
+  var jsonData = {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "stroke": "#555555",
+          "stroke-width": 2,
+          "stroke-opacity": 1
+        },
+        "geometry": #{raw @results.first._source.geometry.to_json}
+      }
+    ]
+  };
+
+  function processPoints(geometry, callback, thisArg) {
+    if (geometry instanceof google.maps.LatLng) {
+      callback.call(thisArg, geometry);
+    } else if (geometry instanceof google.maps.Data.Point) {
+      callback.call(thisArg, geometry.get());
+    } else {
+      geometry.getArray().forEach(function(g) {
+        processPoints(g, callback, thisArg);
+      });
+    }
+  }
+
   handler = Gmaps.build('Google');
   var window_width = $(window).width() * 0.95;
   $('#map').width(window_width);
@@ -97,20 +119,30 @@ javascript:
   } else {
     $('#map').height(window_width * 0.3);
   }
+
   handler.buildMap({ provider: {}, internal: {id: 'map'}}, function(){
-    handler.getMap().setCenter(#{raw @hash.first.to_json});
-    handler.getMap().setZoom(15);
-    google.maps.event.addListener(handler.getMap(), 'bounds_changed', function(object){
+    var map = handler.getMap();
+    map.setCenter(#{raw @hash.first.to_json});
+    map.setZoom(15);
+    map.data.addGeoJson(jsonData);
+    map.data.setStyle({strokeColor: "blue"});
+    google.maps.event.addListener(map, 'bounds_changed', function(object){
       if(false == initialized) {
-        addMarker(handler.getMap().getCenter(), handler.getMap());
+        addMarker(map.getCenter(), map);
         initialized = true;
       }
     });
-    google.maps.event.addListener(handler.getMap(), 'click', function(object){
+    google.maps.event.addListener(map, 'click', function(object){
       for (var i = 0; i < markers.length; i++) {
         markers[i].setMap(null);
       }
-      addMarker(object.latLng, handler.getMap());
+      addMarker(object.latLng, map);
+    });
+
+    map.data.addListener('addfeature', function(e) {
+      var bounds = new google.maps.LatLngBounds();
+      processPoints(e.feature.getGeometry(), bounds.extend, bounds);
+      map.fitBounds(bounds);
     });
   });
 

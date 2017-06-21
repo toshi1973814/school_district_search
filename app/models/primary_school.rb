@@ -6,19 +6,9 @@ class PrimarySchool < ActiveRecord::Base
   index_name "primary_schools"
   document_type "FeatureCollection"
 
-  settings index: { number_of_shards: 1 } do
-    mapping dynamic: false do
-      indexes :title, analyzer: 'english'
-      indexes :body, analyzer: 'english'
-    end
-  end
-
   def self.search(args={})
     __elasticsearch__.search(
       {
-        _source: {
-          exclude: [ "geometry" ]
-        },
         query: {
           geo_shape: {
             geometry: {
@@ -32,10 +22,6 @@ class PrimarySchool < ActiveRecord::Base
         }
       }
     )
-  end
-
-  def as_indexed_json(options = nil)
-    self.as_json( only: [ :title, :body ] )
   end
 
 end

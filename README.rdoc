@@ -6,6 +6,8 @@ GoogleMapでは、該当地点からの最寄りの学校を検索すること�
 http://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-A27.html
 のシェープファイルをgeo jsonに変換し、それをElasticSearchに登録し、Railsからそれを検索させるというアプリです。
 
+Webページ上ではGoogleMapを表示し、学区を視覚的に表示しつつ、Google Maps APIで取得した検索地点から学校までのルート、距離、徒歩時間も合わせて表示します。
+
 === System dependencies
 
 * ElasticSearch

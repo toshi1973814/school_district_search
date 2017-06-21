@@ -13,13 +13,21 @@ h4 検索地点に赤いマーカー、学校に黒丸のマーカー、学区�
 
 - if @results
 
+  - counter = 0;
   - @results.each do |primary_school|
     article
       - properties = primary_school._source.properties
       h3
         | #{properties.a27_006}#{properties.a27_007}
         span.school-address data-school-address="#{properties.a27_008}" = " (所在地: #{properties.a27_008})"
+      div
+        | クリック地点からの距離:
+        span#distance
+        | &nbsp;
+        | クリック地点からの徒歩時間:
+        span#duration
 
+      - counter = counter + 1
   - if @results.count == 0
     p 該当地点のデータは登録されていません
 
@@ -48,12 +56,9 @@ javascript:
     );
   }
 
+  var service = new google.maps.DistanceMatrixService();
   var schoolPosition = null;
   var searchPosition = null;
-
-  function calcDistance(p1, p2) {
-    return (google.maps.geometry.spherical.computeDistanceBetween(p1, p2) / 1000).toFixed(2);
-  }
 
   function codeAddress(map) {
   
@@ -63,7 +68,22 @@ javascript:
       if( status == google.maps.GeocoderStatus.OK ) {
         schoolPosition = results[0].geometry.location
 
-        alert(calcDistance(searchPosition, schoolPosition));
+        service.getDistanceMatrix(
+          {
+            origins: [searchPosition],
+            destinations: [schoolPosition],
+            travelMode: 'WALKING',
+          }, function(response, status) {
+            if (status !== 'OK') {
+              alert('Error was: ' + status);
+            } else {
+              var distance = response.rows[0].elements[0].distance;
+              var duration = response.rows[0].elements[0].duration;
+              $('#distance').html(distance.text);
+              $('#duration').html(duration.text);
+              
+            }
+          });
 
         var marker = new google.maps.Marker({
           position: schoolPosition,

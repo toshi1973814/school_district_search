@@ -9,8 +9,11 @@ http://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-A27.html
 Webページ上ではGoogleMapを表示し、学区を視覚的に表示しつつ、Google Maps APIで取得した検索地点から学校までのルート、距離、徒歩時間も合わせて表示します。
 
 サンプルサイト
+
 http://52.192.159.71:8080
+
 id: yasuda
+
 pw: rails4
 
 === System dependencies

@@ -16,6 +16,12 @@ id: yasuda
 
 pw: rails4
 
+※なお、上記サンプルサイトでは、Googleの標準ユーザにてGoogle Maps Direction APIを利用していますので、使用制限があります。
+大量にリクエストをした場合、使用制限に引っかかって期待通りの動作をしなくなる可能性があります。ご注意ください。
+
+Google Maps Directions API の使用制限
+https://developers.google.com/maps/documentation/directions/usage-limits?hl=ja
+
 === System dependencies
 
 * ElasticSearch

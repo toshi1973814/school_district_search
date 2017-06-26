@@ -28,6 +28,7 @@ h4
           | &nbsp;
           | クリック地点からの徒歩時間:
           span#duration
+        div#photo
 
       - counter = counter + 1
   - if @results.count == 0
@@ -57,16 +58,14 @@ javascript:
     );
   }
 
-  var infowindow = new google.maps.InfoWindow({
-    content: '<img id="info-window" />'
-  });
-  var photoUrl = null;
-
   function placeRequestCallback(results, status) {
     if (status == google.maps.places.PlacesServiceStatus.OK) {
       if(results[0].photos) {
-        var max = parseInt($(window).width() * 0.5);
-        photoUrl = results[0].photos[0].getUrl({'maxWidth': max, 'maxHeight': max})
+        var max = parseInt($(window).width() * 0.3);
+        var photoUrl = results[0].photos[0].getUrl({'maxWidth': max, 'maxHeight': max})
+        var img = $('<img id="dynamic">');
+        img.attr('src', photoUrl);
+        img.appendTo('#photo');
       }
     }
   }
@@ -93,14 +92,6 @@ javascript:
     geocoder.geocode( { 'address' : address }, function( results, status ) {
       if( status == google.maps.GeocoderStatus.OK ) {
         schoolPosition = results[0].geometry.location
-        var marker = new google.maps.Marker({
-          position: schoolPosition,
-          map: map,
-        });
-        marker.addListener('click', function() {
-          infowindow.open(map, marker);
-          $('#info-window').attr('src', photoUrl);
-        });
 
         service.getDistanceMatrix(
           {
